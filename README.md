@@ -50,7 +50,52 @@ Write the Python code to initialize the camera and implement the HOG algorithm.
 
 Run the code and verify that the system detects human presence and draws bounding boxes.
 
- ###  Python Code:
+###  Python Code:
+```
+import cv2
+import imutils
+
+# DroidCam URL
+url = "http://10.168.211.210:4747/video"
+
+# Initialize video capture from DroidCam stream
+cap = cv2.VideoCapture(url)
+
+# Initialize HOG descriptor for person detection
+hog = cv2.HOGDescriptor()
+hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to grab frame")
+        break
+
+    # Resize frame for faster processing
+    frame = imutils.resize(frame, width=640)
+
+    # Detect people
+    rects, weights = hog.detectMultiScale(
+        frame,
+        winStride=(4, 4),
+        padding=(8, 8),
+        scale=1.05
+    )
+
+    # Draw bounding boxes
+    for (x, y, w, h) in rects:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    # Display results
+    cv2.imshow("Occupancy Detection", frame)
+
+    # Exit on 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
  
 import cv2
 import imutils
@@ -89,15 +134,9 @@ cap.release()
 cv2.destroyAllWindows()
 
 
-### SCREEN SHOTS OF OUTPUT 
+### SCREEN SHOTS OF OUTPUT:
 
-
-
-
-
-### RASPI INTERFACE 
-
-
+<img width="1919" height="1079" alt="Screenshot 2025-11-26 161513" src="https://github.com/user-attachments/assets/a902dcc4-8ce8-45d2-acc2-0e431efea261" />
 
 
 ### Result:
